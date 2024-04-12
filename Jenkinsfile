@@ -1,5 +1,5 @@
 pipeline {
-    agent: any
+    agent any
     environment {
         PROJECT_ID = 'abc-technologies-88625635'
         ANSIBLE_SERVER = 'ansible-server'
