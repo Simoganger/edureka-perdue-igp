@@ -11,7 +11,7 @@
     command: docker push simoganger/abc-technologies:latest
 
   - name: create deployment on kubernetes
-    command: kubectl apply -f deployment.yml
+    command: kubectl apply -f ./k8s/deployment.yml
 
   - name: create service on kubernetes
-    command: kubectl apply -f service.yml
+    command: kubectl apply -f ./k8s/service.yml
