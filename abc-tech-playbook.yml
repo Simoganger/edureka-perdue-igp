@@ -1,0 +1,10 @@
+- hosts: ansible
+
+  tasks:
+  - name: create docker image
+    command: docker build -t simoganger/abc-technologies:latest
+    args:
+      chdir: /opt/docker 
+
+  - name: push docker image
+    command: docker push simoganger/abc-technologies:latest
