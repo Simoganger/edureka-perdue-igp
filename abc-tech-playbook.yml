@@ -12,6 +12,10 @@
 
   - name: create deployment on kubernetes
     command: kubectl apply -f ./k8s/deployment.yml
+    args:
+      chdir: /opt/docker
 
   - name: create service on kubernetes
     command: kubectl apply -f ./k8s/service.yml
+    args:
+      chdir: /opt/docker
