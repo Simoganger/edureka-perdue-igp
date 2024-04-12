@@ -2,7 +2,7 @@
 
   tasks:
   - name: create docker image
-    command: docker build -t simoganger/abc-technologies:latest
+    command: docker build -t simoganger/abc-technologies:latest .
     args:
       chdir: /opt/docker 
 
