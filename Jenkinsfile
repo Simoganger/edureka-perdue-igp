@@ -36,25 +36,23 @@ pipeline {
         }
 
         stage('Copy to Ansible'){
-            script {
-                sshPublisher(
-                    continueOnError: false,
-                    failOnError: true,
-                    publishers: [
-                        sshPublisherDesc(
-                            configName: '${env.ANSIBLE_SERVER}',
-                            verbose: true, 
-                            transfers: [
-                                sshTransfer(
-                                    remoteDirectory: '${env.REMOTE_DIRECTORY}', 
-                                    sourceFiles: '**/*.war,**/*.yml,Dockerfile',
-                                    execCommand: 'ansible-playbook /opt/docker/abc-tech-playbook.yml', 
-                                )
-                            ]
-                        )
-                    ]
-                )
-            }
+            sshPublisher(
+                continueOnError: false,
+                failOnError: true,
+                publishers: [
+                    sshPublisherDesc(
+                        configName: '${env.ANSIBLE_SERVER}',
+                        verbose: true, 
+                        transfers: [
+                            sshTransfer(
+                                remoteDirectory: '${env.REMOTE_DIRECTORY}', 
+                                sourceFiles: '**/*.war,**/*.yml,Dockerfile',
+                                execCommand: 'ansible-playbook /opt/docker/abc-tech-playbook.yml', 
+                            )
+                        ]
+                    )
+                ]
+            )
         }
     }
 }
