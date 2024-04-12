@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        PROJECT_ID = 'abc-technologies-88625635'
-        ANSIBLE_SERVER = 'ansible-server'
-        REMOTE_DIRECTORY = '//opt//docker'
+        PROJECT_ID = "abc-technologies-88625635"
+        ANSIBLE_SERVER = "ansible-server"
+        REMOTE_DIRECTORY = "//opt//docker"
     }
     tools {
         maven 'maven-3.2'
@@ -43,11 +43,11 @@ pipeline {
                         failOnError: true,
                         publishers: [
                             sshPublisherDesc(
-                                configName: '${ANSIBLE_SERVER}',
+                                configName: env.ANSIBLE_SERVER,
                                 verbose: true, 
                                 transfers: [
                                     sshTransfer(
-                                        remoteDirectory: '${REMOTE_DIRECTORY}', 
+                                        remoteDirectory: env.REMOTE_DIRECTORY, 
                                         sourceFiles: '**/*.war,**/*.yml,Dockerfile',
                                         execCommand: 'ansible-playbook /opt/docker/abc-tech-playbook.yml', 
                                     )
