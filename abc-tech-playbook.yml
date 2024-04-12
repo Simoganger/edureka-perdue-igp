@@ -1,5 +1,5 @@
 - hosts: ansible
-  user: root
+  user: ansadmin
 
   tasks:
   - name: create docker image
