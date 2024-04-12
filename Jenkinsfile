@@ -43,11 +43,11 @@ pipeline {
                         failOnError: true,
                         publishers: [
                             sshPublisherDesc(
-                                configName: '${env.ANSIBLE_SERVER}',
+                                configName: '${ANSIBLE_SERVER}',
                                 verbose: true, 
                                 transfers: [
                                     sshTransfer(
-                                        remoteDirectory: '${env.REMOTE_DIRECTORY}', 
+                                        remoteDirectory: '${REMOTE_DIRECTORY}', 
                                         sourceFiles: '**/*.war,**/*.yml,Dockerfile',
                                         execCommand: 'ansible-playbook /opt/docker/abc-tech-playbook.yml', 
                                     )
