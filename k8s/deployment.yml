@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: abc-tech-app
-        image: simoganger/abc-technologies:latest
+        image: simoganger/abc-technologies:1.0.0
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
