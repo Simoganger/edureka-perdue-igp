@@ -48,7 +48,7 @@ pipeline {
                                 transfers: [
                                     sshTransfer(
                                         remoteDirectory: env.REMOTE_DIRECTORY, 
-                                        sourceFiles: '**/*.war,**/*.yml,Dockerfile',
+                                        sourceFiles: '**/*.war,**/*.yml,**/**.yaml,Dockerfile',
                                         execCommand: 'ansible-playbook /opt/docker/abc-tech-playbook.yml', 
                                     )
                                 ]
