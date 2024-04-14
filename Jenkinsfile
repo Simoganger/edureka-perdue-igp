@@ -5,6 +5,7 @@ pipeline {
         ANSIBLE_SERVER = "ansible-server"
         REMOTE_DIRECTORY = "//opt//docker"
     }
+    
     tools {
         maven 'maven-3.2.5'
         jdk 'java-22'
