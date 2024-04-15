@@ -3,12 +3,12 @@
 
   tasks:
   - name: create docker image
-    command: docker build -t simoganger/abc-technologies:1.0.1 .
+    command: docker build -t simoganger/abc-technologies:latest .
     args:
       chdir: /opt/docker 
 
   - name: push docker image
-    command: docker push simoganger/abc-technologies:1.0.1
+    command: docker push simoganger/abc-technologies:latest
 
   - name: create deployment on kubernetes
     command: kubectl apply -f ./k8s/deployment.yml
