@@ -18,7 +18,8 @@ The project contains the following components :
 - `Jenkinsfile`: this file contains the complete CI/CD that will **compile, test, package** and **hands the packages artifacts to ansible**.
 - `pom.xml`: this is the main maven configuration file for the java project.
 - `abc-tech-playbook.yml`: this is the ansible playbook that will build the docker image of the project, push it to docker hub, then deploy the project on kubernetes.
-- `monitoring-playbook.yml`: this is the ansible playbook that will deploy all kubernetes components to monitor the application. 
+- `monitoring-on-playbook.yml`: this is the ansible playbook that will deploy all kubernetes components to monitor the application.
+- `monitoring-off-playbook.yml`: this is the ansible playbook that will destroy all kubernetes components to monitor the application. 
 
 ### Deploying the application
 

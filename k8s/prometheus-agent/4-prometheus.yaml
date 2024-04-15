@@ -28,7 +28,7 @@ spec:
   # TODO: replace with your workspace
   - url: https://aps-workspaces.us-east-2.amazonaws.com/workspaces/ws-907db414-3cb6-47f3-bedf-c572c681a35d/api/v1/remote_write
     sigv4:
-      region: us-east-1
+      region: us-east-2
     queueConfig:
       maxSamplesPerSend: 1000
       maxShards: 200

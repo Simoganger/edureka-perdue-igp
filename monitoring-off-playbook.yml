@@ -1,0 +1,39 @@
+- hosts: ansible
+  user: ansadmin
+
+  tasks:
+  
+  - name: remove prometheus operator crd
+    command: kubectl delete -f k8s/prometheus-operator-crd
+    args:
+      chdir: /opt/docker
+
+  - name: remove prometheus operator
+    command: kubectl delete -f k8s/prometheus-operator
+    args:
+      chdir: /opt/docker
+
+  - name: remove prometheus agent
+    command: kubectl delete -f k8s/prometheus-agent
+    args:
+      chdir: /opt/docker
+
+  - name: remove node exporter
+    command: kubectl delete -f k8s/node-exporter
+    args:
+      chdir: /opt/docker
+
+  - name: remove cadvisor
+    command: kubectl delete -f k8s/cadvisor
+    args:
+      chdir: /opt/docker
+
+  - name: remove kube state metrics
+    command: kubectl delete -f k8s/kube-state-metrics
+    args:
+      chdir: /opt/docker
+
+  - name: remove grafana and dashboard
+    command: kubectl delete -R -f k8s/grafana
+    args:
+      chdir: /opt/docker
