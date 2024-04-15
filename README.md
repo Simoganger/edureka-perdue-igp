@@ -17,7 +17,8 @@ The project contains the following components :
 - `Dockerfile`: this file contains directives for docker image generation.
 - `Jenkinsfile`: this file contains the complete CI/CD that will **compile, test, package** and **hands the packages artifacts to ansible**.
 - `pom.xml`: this is the main maven configuration file for the java project.
-- `abc-tech-playbook.yml`: this is the ansible playbook that will build the docker image of the project, push it to docker hub, then deploy the project on kubernetes. 
+- `abc-tech-playbook.yml`: this is the ansible playbook that will build the docker image of the project, push it to docker hub, then deploy the project on kubernetes.
+- `monitoring-playbook.yml`: this is the ansible playbook that will deploy all kubernetes components to monitor the application. 
 
 ### Deploying the application
 
@@ -43,9 +44,8 @@ nano /etc/hostname
 # retart the machine
 init 6
 
-# create a new user and set his password
+# set the password of the user ansadmin that has been created by the infrastructure
 sudo su -
-useradd ansadmin
 passwd ansadmin
 
 # add the new user to sudoers group
@@ -55,7 +55,7 @@ visudo
 # enable password based authentication for this use and reload sshd service
 nano /etc/ssh/sshd_config
 # PasswordAuthentication no
-PasswordAuthentication no
+PasswordAuthentication yes
 
 # reload the sshd service
 service sshd reload
@@ -66,7 +66,7 @@ ssh-keygen
 
 # edit ansible hosts file to add the ansible-server itself as host. Replace the ANSIBLE_PRIVATE_IP_ADDRESS by what ever yours is after terraform execution.
 sudo mkdir /etc/ansible
-nano /etc/ansible/hosts
+sudo nano /etc/ansible/hosts
     [ansible]
     <ANSIBLE_PRIVATE_IP_ADDRESS>
 
@@ -82,18 +82,20 @@ cd /opt
 sudo mkdir docker
 sudo chown ansadmin:ansadmin docker
 
-# add ansadmin to the docker group
-sudo usermod -aG docker ansadmin
-
 # restart the docker service
 sudo service docker restart
 
 # login to docker hub to have the credentials stored. You need to have an account created on https://hub.docker.com/.
-docker login
+sudo docker login
 username:
 password:
 
-# configure access to the EKS cluster
+# configure aws cli to use the same configuration as the machine that creates terraform infra
+aws configure
+# provide aws access key
+# provide aws secret access key
+
+# configure kubectl tool
 aws eks update-kubeconfig --name devl --region us-east-2
 
 # test access to the eks cluster by running the following command that will display the nodes of the eks cluster.
@@ -114,42 +116,17 @@ Now that the Ansible server is up and running, we need to configure the Jenkins 
 
 #### Monitoring solution configuration
 
-The monitoring solution can be configured using the following steps. We are going to do all the manipulation from the ansible server and from the `/opt/docker` directory which is our working directory where Jenkins has copied all the necessary files.
+The monitoring solution can be configured using the following steps. We are going to do all the manipulation from the ansible server and from the `/opt/docker` directory which is our working directory where Jenkins has copied all the necessary files. Most of these commands are automated by simply running the `monitoring-playbook.yml` ansible playbook file using the command `ansible-playbook monitoring-playbook.yml`. But to use the playbook, you should make sure to update all the required files with the informations from your AWS account and resources created from terraform.
 
 ```bash
-# create prometheus operator
-kubectl create -f k8s/prometheus-operator-crd
-kubectl create -f k8s/prometheus-operator
-
-# change k8s/grafana/0-service-account.yaml IAM role arn
-arn:aws:iam::<YOUR_ACCOUNT_ID>:role/prometheus-devl
+# change k8s/prometheus-agent/0-service-account.yaml IAM role arn
+# arn:aws:iam::<YOUR_ACCOUNT_ID>:role/prometheus-devl
 
 # change the prometheus write URL in the k8s/prometheus-agent/4-prometheus.yaml file (you can get this from AWS console)
+# url: https://aps-workspaces.us-east-2.amazonaws.com/workspaces/ws-3f8cc59e-f395-432e-af0d-0ff1f2259708/api/v1/remote_write
 
-# run the prometheus agent
-kubectl apply -f k8s/prometheus-agent
-
-# run the node exporter
-kubectl apply -f k8s/node-exporter
-
-# run the cadvisor
-kubectl apply -f k8s/cadvisor
-
-# run kube state metrics
-kubectl apply -f k8s/kube-state-metrics
-
-# checking pod monitoring
-kubectl get pod -n monitoring
-
-# check logs 
-kubectl logs -f -n monitoring prometheus-agent-0
-
-# exit this monitoring when done with CRTL+C
-
-# on your local machine, run port forwarding for prometheus
-kubectl -n monitoring port-forward svc/prometheus-operated 9090
-
-# change IAM role ARN in grafana/0-service-account.yaml get arn for role grafana-devl
+# change IAM role ARN in k8s/grafana/0-service-account.yaml get arn for role grafana-devl
+# arn:aws:iam::<YOUR_ACCOUNT_ID>:role/grafana-devl
 
 # update k8s/grafana/1-secret.yaml (if you want to change it)
 # first admin-password
@@ -159,11 +136,15 @@ echo -n "devops123" | base64
 echo -n admin | base64
 
 # replace prometheus query url in k8s/grafana/3-datasources.yaml remove /api/v1/query
+# url: https://aps-workspaces.us-east-2.amazonaws.com/workspaces/ws-3f8cc59e-f395-432e-af0d-0ff1f2259708
 
-# apply grafana configuration and dashboards
-kubectl apply -R -f k8s/grafana
+# run the monitoring-playbook.yml
+ansible-playbook monitoring-playbook.yml
 
-# from your local machine, forward grafana port to be able to view the dashboard
+# on your local machine, run port forwarding for prometheus
+kubectl -n monitoring port-forward svc/prometheus-operated 9090
+
+# on your local machine, forward grafana port to be able to view the dashboard
 kubectl -n monitoring port-forward svc/grafana 3000
 
 # now on your local machine enter http://localhost:3000 to have grafana dashboard and http://localhost:9090 to have prometheus raw dashboard

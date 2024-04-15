@@ -1,0 +1,39 @@
+- hosts: ansible
+  user: ansadmin
+
+  tasks:
+  
+  - name: deploy prometheus operator crd
+    command: kubectl create -f k8s/prometheus-operator-crd
+    args:
+      chdir: /opt/docker
+
+  - name: deploy prometheus operator
+    command: kubectl create -f k8s/prometheus-operator
+    args:
+      chdir: /opt/docker
+
+  - name: deploy prometheus agent
+    command: kubectl apply -f k8s/prometheus-agent
+    args:
+      chdir: /opt/docker
+
+  - name: deploy node exporter
+    command: kubectl apply -f k8s/node-exporter
+    args:
+      chdir: /opt/docker
+
+  - name: deploy cadvisor
+    command: kubectl apply -f k8s/cadvisor
+    args:
+      chdir: /opt/docker
+
+  - name: deploy kube state metrics
+    command: kubectl apply -f k8s/kube-state-metrics
+    args:
+      chdir: /opt/docker
+
+  - name: deploy grafana and dashboard
+    command: kubectl apply -R -f k8s/grafana
+    args:
+      chdir: /opt/docker
